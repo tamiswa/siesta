@@ -11,12 +11,22 @@
 #endif
 import UIKit
 
+extension UIApplication {
+    static var sharedIfAvailable: UIApplication?
+    {
+        let sharedApplicationSelector = Selector("shared" + "Application")
+        guard UIApplication.responds(to: sharedApplicationSelector) else
+        { return nil }
+        return UIApplication.perform(sharedApplicationSelector)?.takeUnretainedValue() as? UIApplication
+    }
+}
+
 // Tracks the number of requests in progress across all Siesta services
 private var requestsInProgress = 0
     {
     didSet
         {
-        UIApplication.shared.isNetworkActivityIndicatorVisible =
+        UIApplication.sharedIfAvailable?.isNetworkActivityIndicatorVisible =
             requestsInProgress > 0
         }
     }
